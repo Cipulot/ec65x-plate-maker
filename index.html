@@ -131,61 +131,39 @@
                     }
                     filename += ".dxf";
 
-                    var fileUrl = 'https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/Plate_Indexed_Name/' + boardValue + '_Plate_Indexed_Name/' + filename;
-                    var licenseUrl = 'https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/LICENSE';
+                    var fileUrl = 'https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/Plate_Indexed_Name/' + boardValue + '_Plate_Indexed_Name/' + filename;
+                    var licenseUrl = 'https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/LICENSE';
 
                     fetch(fileUrl)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.encoding === 'base64') {
-                                var base64String = data.content.replace(/\n/g, '');
-                                var binaryString = atob(base64String);
-                                var byteArray = new Uint8Array(binaryString.length);
-                                for (var i = 0; i < binaryString.length; i++) {
-                                    byteArray[i] = binaryString.charCodeAt(i);
-                                }
+                        .then(response => response.arrayBuffer())
+                        .then(arrayBuffer => {
+                            var byteArray = new Uint8Array(arrayBuffer);
 
-                                var zip = new JSZip();
-                                zip.file(filename, byteArray);
+                            var zip = new JSZip();
+                            zip.file(filename, byteArray);
 
                                 fetch(licenseUrl)
-                                    .then(response => response.json())
-                                    .then(licenseData => {
-                                        if (licenseData.encoding === 'base64') {
-                                            var licenseBase64 = licenseData.content.replace(/\n/g, '');
-                                            var licenseBinary = atob(licenseBase64);
-                                            var licenseByteArray = new Uint8Array(licenseBinary.length);
-                                            for (var i = 0; i < licenseBinary.length; i++) {
-                                                licenseByteArray[i] = licenseBinary.charCodeAt(i);
-                                            }
-                                            zip.file("LICENSE", licenseByteArray);
+                                    .then(response => response.text())
+                                    .then(licenseText => {
+                                        zip.file("LICENSE", licenseText);
 
                                             var additionalFiles = [];
 
                                             // Add appropriate guide files based on hole type
                                             if (holeType === "Densus_Inserts") {
-                                                additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/densus_ec_insert_design_guide.png',
-                                                    'https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/simple_counterbore.png');
+                                                additionalFiles.push('https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/densus_ec_insert_design_guide.png?raw=true',
+                                                    'https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/simple_counterbore.png?raw=true');
                                             } else if (holeType === "Tapped_Holes") {
-                                                additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/simple_tapped.png');
+                                                additionalFiles.push('https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/simple_tapped.png?raw=true');
                                             }
 
                                             // Fetch and add all additional files to the zip
-                                            Promise.all(additionalFiles.map(fileUrl => fetch(fileUrl).then(response => response.json())))
-                                                .then(fileDataArray => {
-                                                    fileDataArray.forEach(fileData => {
-                                                        if (fileData.encoding === 'base64') {
-                                                            var base64 = fileData.content.replace(/\n/g, '');
-                                                            var binary = atob(base64);
-                                                            var byteArray = new Uint8Array(binary.length);
-                                                            for (var i = 0; i < binary.length; i++) {
-                                                                byteArray[i] = binary.charCodeAt(i);
-                                                            }
-                                                            var fileName = fileData.name;
-                                                            zip.file(fileName, byteArray);
-                                                        } else {
-                                                            throw new Error('File content is not base64 encoded: ' + fileData.name);
-                                                        }
+                                            Promise.all(additionalFiles.map(fileUrl => fetch(fileUrl).then(response => response.arrayBuffer())))
+                                                .then(fileBufferArray => {
+                                                    additionalFiles.forEach((fileUrl, index) => {
+                                                        var fileName = fileUrl.split('/').pop().split('?')[0]; // Extract filename from URL
+                                                        var byteArray = new Uint8Array(fileBufferArray[index]);
+                                                        zip.file(fileName, byteArray);
                                                     });
 
                                                     // Generate and save the zip file
@@ -206,16 +184,10 @@
                                                 .catch(error => {
                                                     console.error('Error fetching additional files:', error);
                                                 });
-                                        } else {
-                                            throw new Error('License content is not base64 encoded');
-                                        }
                                     })
                                     .catch(error => {
                                         console.error('Error fetching license:', error);
                                     });
-                            } else {
-                                throw new Error('DXF file content is not base64 encoded');
-                            }
                         })
                         .catch(error => {
                             console.error('Error fetching DXF file:', error);
