@@ -52,6 +52,7 @@
         <select id="board">
             <option value="" selected disabled hidden>Choose here</option>
             <option value="EC65X">EC65X</option>
+            <option value="Bauer_Lite">Bauer Lite</option>
             <option value="IRON165">IRON165</option>
         </select>
         <label for="backspace">Backspace:</label>
@@ -161,6 +162,10 @@
                                             zip.file("LICENSE", licenseByteArray);
 
                                             var additionalFiles = [];
+
+                                            if (boardValue === "Bauer_Lite") {
+                                                additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/bauer_lite_countersunk_mount_hole.png');
+                                            }
 
                                             // Add appropriate guide files based on hole type
                                             if (holeType === "Densus_Inserts") {
