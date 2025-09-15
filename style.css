@@ -10,9 +10,7 @@ select {
   margin-bottom: 10px;
 }
 
-#configForm select:last-of-type {
-  margin-bottom: 24px;
-}
+
 
 html {
   font-size: 16px;
@@ -104,6 +102,7 @@ form {
   grid-template-columns: 40% 60%;
   margin-top: 2rem;
   align-items: center;
+  row-gap: 10px;
 }
 
 form>*:nth-child(n):nth-last-child(1) {
