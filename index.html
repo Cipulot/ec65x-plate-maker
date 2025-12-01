@@ -24,6 +24,12 @@
             <option value="Phi65">Phi65</option>
             <option value="SixtyFive_Mode">SixtyFive Mode</option>
         </select>
+        <label for="caps_lock">Caps Lock:</label>
+        <select id="caps_lock">
+            <option value="" selected disabled hidden>Choose here</option>
+            <option value="0">Normal Caps Lock</option>
+            <option value="1">Stepped Caps Lock</option>
+        </select>
         <label for="backspace">Backspace:</label>
         <select id="backspace">
             <option value="" selected disabled hidden>Choose here</option>
@@ -56,12 +62,6 @@
             <option value="General_OEM_Style">General OEM-Style</option>
             <option value="Dynacap_Style">Dynacap Style</option>
         </select>
-        <label for="hole_type">Hole Type:</label>
-        <select id="hole_type">
-            <option value="" selected disabled hidden>Choose here</option>
-            <option value="Tapped_Holes">Tapped Holes</option>
-            <option value="Densus_Inserts">Densus Inserts</option>
-        </select>
         <button type="submit">Download</button>
     </form>
 
@@ -89,15 +89,11 @@
                     alert("Please select all configurations.");
                 } else {
                     var boardValue = $("#board").val();
-                    var configIndices = $('select').not('#board, #switch_type, #hole_type').map(function () { return $(this).val(); }).get();
+                    var configIndices = $('select').not('#board, #switch_type').map(function () { return $(this).val(); }).get();
                     var switchType = $("#switch_type").val();
-                    var holeType = $("#hole_type").val();
                     var filename = boardValue + "_" + configIndices.join('_');
                     if (switchType === "Dynacap_Style") {
                         filename += "_Dynacap";
-                    }
-                    if (holeType === "Densus_Inserts") {
-                        filename += "_Densus_Inserts";
                     }
                     filename += ".dxf";
 
@@ -132,17 +128,7 @@
 
                                             var additionalFiles = [];
 
-                                            //if (boardValue === "Bauer_Lite") {
-                                            //additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/bauer_lite_countersunk_mount_hole.png');
-                                            //}
-
-                                            // Add appropriate guide files based on hole type
-                                            if (holeType === "Densus_Inserts") {
-                                                additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/densus_ec_insert_design_guide.png',
-                                                    'https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/simple_counterbore.png');
-                                            } else if (holeType === "Tapped_Holes") {
-                                                additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/simple_tapped.png');
-                                            }
+                                            additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/simple_tapped.png');
 
                                             // Fetch and add all additional files to the zip
                                             Promise.all(additionalFiles.map(fileUrl => fetch(fileUrl).then(response => response.json())))
@@ -167,11 +153,6 @@
                                                         var zipFilename = boardValue + "_" + configIndices.join('_');
                                                         if (switchType === "Dynacap_Style") {
                                                             zipFilename += "_Dynacap";
-                                                        }
-                                                        if (holeType === "Densus_Inserts") {
-                                                            zipFilename += "_Densus_Inserts";
-                                                        } else if (holeType === "Tapped_Holes") {
-                                                            zipFilename += "_Tapped_Holes";
                                                         }
                                                         zipFilename += ".zip";
                                                         saveAs(content, zipFilename);
