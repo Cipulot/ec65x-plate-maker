@@ -128,7 +128,7 @@
 
                                             var additionalFiles = [];
 
-                                            additionalFiles.push('https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/simple_tapped.png');
+                                            additionalFiles.push('https://raw.githubusercontent.com/Cipulot/ec60x-plate-maker/refs/heads/main/EC_Plate_Specifications.pdf');
 
                                             // Fetch and add all additional files to the zip
                                             Promise.all(additionalFiles.map(fileUrl => fetch(fileUrl).then(response => response.json())))
