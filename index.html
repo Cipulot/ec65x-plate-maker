@@ -97,8 +97,8 @@
                     }
                     filename += ".dxf";
 
-                    var fileUrl = 'https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/Plate_Indexed_Name/' + boardValue + '_Plate_Indexed_Name/' + filename;
-                    var licenseUrl = 'https://api.github.com/repos/Cipulot/ec65x-plate-maker/contents/LICENSE';
+                    var fileUrl = 'https://raw.githubusercontent.com/Cipulot/ec60x-plate-maker/refs/heads/main/Plate_Indexed_Name/' + boardValue + '_Plate_Indexed_Name/' + filename;
+                    var licenseUrl = `https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/LICENSE`;
 
                     fetch(fileUrl)
                         .then(response => response.json())
@@ -128,7 +128,7 @@
 
                                             var additionalFiles = [];
 
-                                            additionalFiles.push('https://raw.githubusercontent.com/Cipulot/ec60x-plate-maker/refs/heads/main/EC_Plate_Specifications.pdf');
+                                            additionalFiles.push('https://raw.githubusercontent.com/Cipulot/ec65x-plate-maker/refs/heads/main/EC_Plate_Specifications.pdf');
 
                                             // Fetch and add all additional files to the zip
                                             Promise.all(additionalFiles.map(fileUrl => fetch(fileUrl).then(response => response.json())))
