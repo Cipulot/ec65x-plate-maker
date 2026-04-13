@@ -67,6 +67,22 @@
         <button type="submit">Download</button>
     </form>
 
+    <div id="licenseModal" class="license-modal" aria-hidden="true">
+        <div class="license-modal__backdrop"></div>
+        <div class="license-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="licenseModalTitle">
+            <h2 id="licenseModalTitle">License agreement</h2>
+            <p>
+                By continuing, you agree to the terms of the
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0 License</a>.
+            </p>
+            <div class="license-modal__actions">
+                <button type="button" id="licenseDecline" class="license-modal__button license-modal__button--secondary">Cancel</button>
+                <button type="button" id="licenseAccept" class="license-modal__button">I Agree</button>
+            </div>
+        </div>
+    </div>
+
+
     <footer>
         <p>&copy; 2025 Cipulot</p>
         <p>All files are provided under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
@@ -78,6 +94,17 @@
 
     <script>
         $(document).ready(function () {
+            var pendingDownload = null;
+
+            function hideLicenseModal() {
+                $("#licenseModal").removeClass("is-visible").attr("aria-hidden", "true");
+            }
+
+            function showLicenseModal(onAccept) {
+                pendingDownload = onAccept;
+                $("#licenseModal").addClass("is-visible").attr("aria-hidden", "false");
+            }
+
             $("#configForm").submit(function (e) {
                 e.preventDefault();
                 var isFormFilled = true;
@@ -89,7 +116,11 @@
                 });
                 if (!isFormFilled) {
                     alert("Please select all configurations.");
-                } else {
+                    return;
+                }
+
+                showLicenseModal(function () {
+                    hideLicenseModal();
                     var boardValue = $("#board").val();
                     var configIndices = $('select').not('#board, #switch_type').map(function () { return $(this).val(); }).get();
                     var switchType = $("#switch_type").val();
@@ -149,7 +180,19 @@
                         .catch(error => {
                             console.error('Error fetching DXF file:', error);
                         });
+                });
+            });
+
+            $("#licenseAccept").on("click", function () {
+                if (typeof pendingDownload === "function") {
+                    pendingDownload();
                 }
+                pendingDownload = null;
+            });
+
+            $("#licenseDecline, #licenseModal .license-modal__backdrop").on("click", function () {
+                pendingDownload = null;
+                hideLicenseModal();
             });
         });
     </script>
