@@ -10,8 +10,6 @@ select {
   margin-bottom: 10px;
 }
 
-
-
 html {
   font-size: 16px;
 }
@@ -141,4 +139,72 @@ button:active {
 footer {
   font-size: small;
   text-align: center;
+}
+
+.license-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.license-modal.is-visible {
+  display: flex;
+}
+
+.license-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.license-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 32rem);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: rgb(245, 245, 245);
+  color: rgb(34, 34, 34);
+  box-shadow: rgba(0, 0, 0, 0.35) 0 20px 60px;
+}
+
+.license-modal__dialog h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.license-modal__dialog p {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+}
+
+.license-modal__dialog a {
+  color: rgb(0, 95, 247);
+  text-decoration: underline;
+}
+
+.license-modal__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.license-modal__button {
+  min-width: 0;
+  padding: 0.85rem 1.25rem;
+  font-size: 1rem;
+}
+
+.license-modal__button--secondary {
+  background-color: rgb(107, 114, 128);
+}
+
+.license-modal__button--secondary:hover {
+  background-color: rgb(75, 85, 99);
 }
